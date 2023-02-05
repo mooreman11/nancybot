@@ -1,0 +1,11 @@
+{
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "driver": "SQLite",
+            "database": "\\\\wsl.localhost\\Ubuntu-20.04\\home\\noahkmoore\\PyCharm\\nancybot\\db.sqlite3",
+            "name": "django"
+        }
+    ],
+    "sqltools.useNodeRuntime": true
+}
