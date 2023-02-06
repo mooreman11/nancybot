@@ -90,7 +90,7 @@ fabric.properties
 [Ii]nclude
 [Ll]ib
 [Ll]ib64
-[Ll]ocal
+#[Ll]ocal
 [Ss]cripts
 pyvenv.cfg
 .venv
