@@ -124,6 +124,78 @@ class CongresspersonTracking:
             text += page.extract_text()
         return text
 
+    def get_transaction(self, data):
+        transaction = ''
+        for keyword_list in [purchase_whitelist, sell_whitelist]:
+            for keyword in keyword_list:
+                if data.find(keyword) > -1:
+                    if keyword_list == purchase_whitelist:
+                        transaction = 'P'
+                    elif keyword_list == sell_whitelist:
+                        transaction = 'S'
+                    break
+            if transaction != '':
+                return transaction
+
+    def get_stock(self, ticker: str, data: str, comments) -> dict:
+        qty = ''
+        transaction = self.get_transaction(data)
+        for comment in comments:
+            comment = comment[:comment.find('\n')]
+            vals = comment.replace(',', '').split()
+            for val in vals:
+                if val.isnumeric():
+                    qty = val
+                    break
+        trade = {
+            'ticker': ticker,
+            'transaction': transaction,
+            'qty': qty,
+        }
+        return trade
+
+    def get_option(self, ticker: str, data: str, comments) -> dict:
+        qty = ''
+        strike_price = 0
+        purchase_date = ''
+        expiration = ''
+        transaction = self.get_transaction(data)
+        for comment in comments:
+            comment = comment[:comment.find('\n')]
+            for keyword_list in [put_whitelist, call_whitelist]:
+                for keyword in keyword_list:
+                    if comment.find(keyword) > -1:
+                        if keyword_list == put_whitelist:
+                            transaction += 'p'
+                            break
+                        elif keyword_list == call_whitelist:
+                            transaction += 'c'
+                            break
+                if len(transaction) == 2:
+                    break
+            vals = comment.replace(',', '').split()
+            for val in vals:
+                if val.isnumeric() and qty == 0:
+                    qty = val
+                if val.find('$') > -1 and strike_price == 0:
+                    strike_price = val
+                if qty != 0 and strike_price != 0:
+                    break
+            date_extract_pattern = "[0-9]{1,2}\\/[0-9]{1,2}\\/[0-9]{2}"
+            dates = re.findall(date_extract_pattern, comment)
+            if len(dates) == 2:
+                purchase_date = dates[0]
+                expiration = dates[1]
+        trade = {
+            'ticker': ticker,
+            'transaction': transaction,
+            'qty': qty,
+            'strike_price': strike_price,
+            'purchase_date': purchase_date,
+            'expiration': expiration,
+        }
+        return trade
+
     def extract_filing_data(self, file: str):
         trades = []
         file_start = file.find('Gains >\n$200?')
@@ -131,86 +203,15 @@ class CongresspersonTracking:
         file = file[file_start + 14:file_end]
         stocks = file.split('SP')  # exclusive to Nancy Pelosi
         for stock in stocks[1:]:
-            transaction = ''
-            qty = 0
             first_line_end = stock.find('\n')
             start_index = stock.find('(')
             end_index = stock.find(')')
             comments = stock.split(':')
             ticker = stock[start_index + 1:end_index]
             if stock.find('[ST]') > -1:
-                for keyword_list in [purchase_whitelist, sell_whitelist]:
-                    for keyword in keyword_list:
-                        if stock.find(keyword) > -1:
-                            if keyword_list == purchase_whitelist:
-                                transaction = 'P'
-                            elif keyword_list == sell_whitelist:
-                                transaction = 'S'
-                            break
-                    if transaction != '':
-                        break
-                for comment in comments:
-                    comment = comment[:comment.find('\n')]
-                    vals = comment.replace(',', '').split()
-                    for val in vals:
-                        if val.isnumeric():
-                            qty = val
-                            break
-                trade = {
-                    'ticker': ticker,
-                    'transaction': transaction,
-                    'qty': qty,
-                }
-                trades.append(trade)
+                trades.append(self.get_stock(ticker, stock, comments))
             elif stock.find('[OP]') > -1:
-                strike_price = 0
-                purchase_date = ''
-                expiration = ''
-                for keyword_list in [purchase_whitelist, sell_whitelist]:
-                    for keyword in keyword_list:
-                        if stock.find(keyword) > -1:
-                            if keyword_list == purchase_whitelist:
-                                transaction = 'P'
-                            elif keyword_list == sell_whitelist:
-                                transaction = 'S'
-                            break
-                    if transaction != '':
-                        break
-                for comment in comments:
-                    comment = comment[:comment.find('\n')]
-                    for keyword_list in [put_whitelist, call_whitelist]:
-                        for keyword in keyword_list:
-                            if comment.find(keyword) > -1:
-                                if keyword_list == put_whitelist:
-                                    transaction += 'p'
-                                    break
-                                elif keyword_list == call_whitelist:
-                                    transaction += 'c'
-                                    break
-                        if len(transaction) == 2:
-                            break
-                    vals = comment.replace(',', '').split()
-                    for val in vals:
-                        if val.isnumeric() and qty == 0:
-                            qty = val
-                        if val.find('$') > -1 and strike_price == 0:
-                            strike_price = val
-                        if qty != 0 and strike_price != 0:
-                            break
-                    date_extract_pattern = "[0-9]{1,2}\\/[0-9]{1,2}\\/[0-9]{2}"
-                    dates = re.findall(date_extract_pattern, comment)
-                    if len(dates) == 2:
-                        purchase_date = dates[0]
-                        expiration = dates[1]
-                trade = {
-                    'ticker': ticker,
-                    'transaction': transaction,
-                    'qty': qty,
-                    'strike_price': strike_price,
-                    'purchase_date': purchase_date,
-                    'expiration': expiration,
-                }
-                trades.append(trade)
+                trades.append(self.get_option(ticker, stock, comments))
             else:
                 print(stock[:first_line_end])
         for trade in trades:

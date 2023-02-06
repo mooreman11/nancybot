@@ -3,3 +3,10 @@ djangorestframework
 requests
 xmltodict
 PyPDF2
+drf_yasg
+celery[redis]
+django-celery-beat
+python-dotenv
+psycopg2-binary
+flower
+flake8
