@@ -4,15 +4,15 @@ set -o errexit
 set -o nounset
 
 worker_ready() {
-    celery -A nancybot inspect ping
+  celery -A nancybot inspect ping
 }
 
 until worker_ready; do
-  >&2 echo 'Celery workers not available'
+  echo >&2 'Celery workers not available'
   sleep 1
 done
->&2 echo 'Celery workers is available'
+echo >&2 'Celery workers is available'
 
-celery -A nancybot  \
-    --broker="${CELERY_BROKER}" \
-    flower
+celery -A nancybot \
+  --broker="${CELERY_BROKER}" \
+  flower
