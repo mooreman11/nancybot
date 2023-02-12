@@ -39,7 +39,7 @@
   <p align="center">
     Congressional Security Tracking API
     <br />
-    <a href="https://github.com/mooreman11/nancybot"><strong>Explore the docs »</strong></a>
+    <a href="http://noahkmoore.com:8010"><strong>Explore the docs »</strong></a>
     <br />
     <br />
     <a href="https://github.com/mooreman11/nancybot">View Demo</a>
