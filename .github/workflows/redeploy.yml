@@ -16,18 +16,13 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
-        
-      - name: Setup SSH Key
-        uses: appleboy/ssh-action@master
-        with:
-          key: ${{ env.SSH_KEY }}
-
 
       - name: Run Docker Compose on Remote Server
         uses: appleboy/ssh-action@master
         with:
           host: ${{ env.REMOTE_HOST }}
           username: ${{ env.REMOTE_USER }}
+          key: ${{ env.SSH_KEY }}
           script: |
             cd /home/atlascapital/nancybot
             touch .env.dev
