@@ -80,15 +80,15 @@ class CongressionalData:
         return data_dict
 
     def send_congressional_data_to_db(self, data: dict):
-        # validated_data = []
-        # for item in data:
-        #     try:
-        #         serializer = FilingSerializer(data=item)
-        #         if serializer.is_valid(raise_exception=True):
-        #             validated_data.append(serializer.data)
-        #     except Exception as e:
-        #         print(e)
-        serializer = FilingSerializer(data=data, many=True)
+        validated_data = []
+        for item in data:
+            try:
+                serializer = FilingSerializer(data=item)
+                if serializer.is_valid(raise_exception=True):
+                    validated_data.append(serializer.data)
+            except Exception as e:
+                print(e)
+        serializer = FilingSerializer(data=validated_data, many=True)
         if serializer.is_valid():
             serializer.save()
             return serializer.data
