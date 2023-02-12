@@ -2,7 +2,7 @@ name: Deploy Production
 
 on:
   push:
-    branches: [ 'dev' ]
+    branches: [ 'master' ]
 
 env:
   SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
