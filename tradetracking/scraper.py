@@ -7,7 +7,7 @@ import shutil
 from PyPDF2 import PdfReader
 
 from tradetracking.models import Filing
-from tradetracking.serializers import FilingSerializer
+from tradetracking.serializers import FilingSerializer, TradeSerializer
 
 corporation_codings = [
     'Inc.',
@@ -148,9 +148,9 @@ class CongresspersonTracking:
                     qty = val
                     break
         trade = {
-            'ticker': ticker,
-            'transaction': transaction,
-            'qty': qty,
+            'Ticker': ticker,
+            'Transaction': transaction,
+            'Quantity': qty,
         }
         return trade
 
@@ -187,12 +187,12 @@ class CongresspersonTracking:
                 purchase_date = dates[0]
                 expiration = dates[1]
         trade = {
-            'ticker': ticker,
-            'transaction': transaction,
-            'qty': qty,
-            'strike_price': strike_price,
-            'purchase_date': purchase_date,
-            'expiration': expiration,
+            'Ticker': ticker,
+            'Transaction': transaction,
+            'Quantity': qty,
+            'StrikePrice': strike_price,
+            'PurchaseDate': purchase_date,
+            'ExpirationData': expiration,
         }
         return trade
 
@@ -217,14 +217,3 @@ class CongresspersonTracking:
         for trade in trades:
             print(trade)
         return trades
-
-
-def parse_congressperson():
-    filings = []
-    method = CongresspersonTracking()
-    datasets = method.check_db()
-    for dataset in datasets:
-        filing_text = method.get_filing(dataset.DocID, dataset.Year)
-        extracted_data = method.extract_filing_data(filing_text)
-        filings.append(extracted_data)
-    return filings

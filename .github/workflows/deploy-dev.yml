@@ -1,0 +1,31 @@
+name: Deploy Dev
+
+on:
+  push:
+    branches: [ 'master' ]
+
+env:
+  SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+  REMOTE_HOST: noahkmoore.com
+  REMOTE_USER: atlascapital
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Run Docker Compose on Remote Server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ env.REMOTE_HOST }}
+          username: ${{ env.REMOTE_USER }}
+          key: ${{ env.SSH_KEY }}
+          script: |
+            cd /home/atlascapital/nancybot
+            touch .env.dev
+            echo "${{ secrets.SERVER_ENV_DEV }}" > .env.dev
+            git pull
+            docker-compose build --pull && docker-compose up --build --remove-orphans -d

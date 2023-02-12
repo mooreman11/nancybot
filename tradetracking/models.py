@@ -13,3 +13,13 @@ class Filing(models.Model):
     Year = models.IntegerField()
     FilingDate = models.DateField()
     DocID = models.IntegerField(unique=True)
+
+class Trade(models.Model):
+    DocID = models.ForeignKey(to=Filing, on_delete=models.CASCADE)
+    Ticker = models.CharField(max_length=255)
+    Transaction = models.CharField(max_length=2)
+    Quantity = models.IntegerField()
+    StrikePrice = models.IntegerField(null=True)
+    PurchaseDate: models.DateField(null=True)
+    ExpirationData = models.DateField(null=True)
+

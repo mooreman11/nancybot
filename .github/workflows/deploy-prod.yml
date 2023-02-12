@@ -1,8 +1,8 @@
-name: redeploy
+name: Deploy Dev
 
 on:
   push:
-    branches: [ 'master' ]
+    branches: [ 'dev' ]
 
 env:
   SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
@@ -28,4 +28,4 @@ jobs:
             touch .env.dev
             echo "${{ secrets.SERVER_ENV_DEV }}" > .env.dev
             git pull
-            docker-compose build --pull && docker-compose up --build --remove-orphans -d
+            docker-compose -f docker-compose.prod.yaml build --pull && docker-compose -f docker-compose.prod.yaml up --build --remove-orphans -d
