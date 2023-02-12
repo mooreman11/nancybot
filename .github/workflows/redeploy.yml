@@ -6,7 +6,7 @@ on:
 
 env:
   SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-  REMOTE_HOST: dev-api.nancybot.noahkmoore.com
+  REMOTE_HOST: noahkmoore.com
   REMOTE_USER: atlascapital
 
 jobs:
@@ -27,7 +27,7 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           host: ${{ env.REMOTE_HOST }}
-          username: ${{ env.REMOTE_HOST }}
+          username: ${{ env.REMOTE_USER }}
           script: |
             cd /home/atlascapital/nancybot
             touch .env.dev
