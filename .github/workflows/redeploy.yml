@@ -7,6 +7,7 @@ on:
 env:
   SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
   REMOTE_HOST: dev-api.nancybot.noahkmoore.com
+  REMOTE_USER: atlascapital
 
 jobs:
   build:
@@ -19,13 +20,14 @@ jobs:
       - name: Setup SSH Key
         uses: appleboy/ssh-action@master
         with:
-          ssh-private-key: ${{ env.SSH_KEY }}
+          key: ${{ env.SSH_KEY }}
+
 
       - name: Run Docker Compose on Remote Server
         uses: appleboy/ssh-action@master
         with:
           host: ${{ env.REMOTE_HOST }}
-          username: atlascapital
+          username: ${{ env.REMOTE_HOST }}
           script: |
             cd /home/atlascapital/nancybot
             touch .env.dev
