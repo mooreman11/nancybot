@@ -1,25 +1,25 @@
-name: Deploy Dev
-
-on:
-  push:
-    branches: [ master ]
-
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout the repo
-        uses: actions/checkout@v3
-      - name: Make envfile
-        run: |
-          touch .env.dev
-          echo "${{ secrets.SERVER_ENV_DEV }}" > .env.dev
-          cat .env.dev
-
-      - uses: alex-ac/github-action-ssh-docker-compose@master
-        name: Docker-Compose Remote Deployment
-        with:
-          ssh_host: 65.108.254.141
-          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-          ssh_user: ${{ secrets.SSH_USER }}
-          docker_compose_prefix: nancybot
+#name: Deploy Dev
+#
+#on:
+#  push:
+#    branches: [ master ]
+#
+#jobs:
+#  deploy:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Checkout the repo
+#        uses: actions/checkout@v3
+#      - name: Make envfile
+#        run: |
+#          touch .env.dev
+#          echo "${{ secrets.SERVER_ENV_DEV }}" > .env.dev
+#          cat .env.dev
+#
+#      - name: Docker-Compose Remote Deployment
+#        uses: alex-ac/github-action-ssh-docker-compose@master
+#        with:
+#          ssh_host: 65.108.254.141
+#          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
+#          ssh_user: ${{ secrets.SSH_USER }}
+#          docker_compose_prefix: nancybot
