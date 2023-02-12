@@ -8,6 +8,7 @@ class FilingSerializer(serializers.ModelSerializer):
         model = Filing
         fields = '__all__'
 
+
 class TradeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Trade

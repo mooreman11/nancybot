@@ -14,6 +14,7 @@ class Filing(models.Model):
     FilingDate = models.DateField()
     DocID = models.IntegerField(unique=True)
 
+
 class Trade(models.Model):
     DocID = models.ForeignKey(to=Filing, on_delete=models.CASCADE)
     Ticker = models.CharField(max_length=255)
@@ -22,4 +23,3 @@ class Trade(models.Model):
     StrikePrice = models.IntegerField(null=True)
     PurchaseDate: models.DateField(null=True)
     ExpirationData = models.DateField(null=True)
-
