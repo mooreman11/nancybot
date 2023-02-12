@@ -22,6 +22,7 @@ jobs:
         with:
           key: ${{ env.SSH_KEY }}
 
+
       - name: Run Docker Compose on Remote Server
         uses: appleboy/ssh-action@master
         with:
